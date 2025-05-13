@@ -5,6 +5,8 @@
 #include <demoShaderLoader.h>
 #include <iostream>
 
+#include <window.h>
+
 
 #define USE_GPU_ENGINE 0
 extern "C"
@@ -38,7 +40,7 @@ int main(void)
 	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //you might want to do this when testing the game for shipping
 
 
-	GLFWwindow *window = window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
+	GLFWwindow *window = window = glfwCreateWindow(windowWidth, windowHeight, windowTitle, NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
@@ -72,16 +74,6 @@ int main(void)
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		//I'm using the old pipeline here just to test, you shouldn't learn this,
-		//Also It might not work on apple
-		glBegin(GL_TRIANGLES);
-		glColor3f(1, 0, 0);
-		glVertex2f(0,1);
-		glColor3f(0, 1, 0);
-		glVertex2f(1,-1);
-		glColor3f(0, 0, 1);
-		glVertex2f(-1,-1);
-		glEnd();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
