@@ -79,6 +79,68 @@ public:
 
 
 	//Need to add update camera funciton here
+	void updateCamera(GLfloat deltaTime) {
+
+		//Get movement infrom from view matrix
+		glm::vec3 dirX(matView[0][0], matView[1][0], matView[2][0]);
+		glm::vec3 dirY(matView[0][1], matView[1][1], matView[2][1]);
+		glm::vec3 dirZ(matView[0][2], matView[1][2], matView[2][2]);;
+
+		//Change position in the given direction
+		glm::vec3 fMovement(0.0f, 0.0f, 0.0f);
+
+		//Directional keys
+
+		if (keysInUse[GLFW_KEY_W]) //Foward
+			fMovement -= dirZ;
+		
+		if (keysInUse[GLFW_KEY_S]) //Back
+			fMovement += dirZ;
+
+		if (keysInUse[GLFW_KEY_A]) //Left
+			fMovement -= dirX;
+
+		if (keysInUse[GLFW_KEY_D]) //Right
+			fMovement += dirX;
+
+		if (keysInUse[GLFW_KEY_E]) //Vert Up
+			fMovement += dirY;
+
+		if (keysInUse[GLFW_KEY_Q]) //Vert down
+			fMovement -= dirY;
+
+		//Rotation
+		if (keysInUse[GLFW_KEY_UP])
+			fPitch -= 2.0;
+
+		if (keysInUse[GLFW_KEY_DOWN])
+			fPitch += 2.0;
+
+		if (keysInUse[GLFW_KEY_RIGHT])
+			fYaw += 2.0;
+
+		if (keysInUse[GLFW_KEY_LEFT])
+			fYaw -= 2.0;
+
+		//Button to set neutral rotation
+		if (keysInUse[GLFW_KEY_N])
+			cQuaternion = glm::quat(glm::vec3(0.0f, 0.0f, 0.f));
+
+		//Multiple by delta time, so movement speed lines with PC performance.
+		GLfloat velocity = cMovementSpeed * deltaTime;
+
+		//Update position
+		cPosition = fMovement * velocity;
+
+		//Now we finally have to update our view matrix
+		updateViewMatrix();
+	}
+
+	//Setter for our speed
+	void setMovementSpeed(float speed) {
+		cMovementSpeed = speed;
+	}
+
 
 private:
 	//Disable copying and assignment for camera
