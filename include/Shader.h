@@ -55,6 +55,8 @@ public:
 
 		//Finally attach the shader, and than free the alocated memory
 		glAttachShader(ID, shader);
+		std::cout << "Shader attached" << std::endl;
+
 		glDeleteShader(shader);
 	}
 	
@@ -62,6 +64,7 @@ public:
 	void link() {
 		//Link all current attached shaders
 		glLinkProgram(ID);
+		std::cout << "Linked complete" << std::endl;
 
 		//Display any errors
 		glGetProgramiv(ID, GL_LINK_STATUS, &success);
@@ -83,6 +86,10 @@ public:
 		attach(vertFileName);
 		attach(fragFileName);
 		link();
+	}
+
+	unsigned int getUniformFromName(const std::string& name) {
+		return glGetUniformLocation(ID, name.c_str());
 	}
 
 	void setInt(const std::string& name, int value) const

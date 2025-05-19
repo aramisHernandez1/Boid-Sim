@@ -130,7 +130,7 @@ public:
 		GLfloat velocity = cMovementSpeed * deltaTime;
 
 		//Update position
-		cPosition = fMovement * velocity;
+		cPosition += fMovement * velocity;
 
 		//Now we finally have to update our view matrix
 		updateViewMatrix();
