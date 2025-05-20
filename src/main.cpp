@@ -194,9 +194,37 @@ int main(void)
 	*/
 
 
+	//Lighting shader
+	Shader* lightShader;
+	lightShader = new Shader();
+	lightShader->makeBasicShader(RESOURCES_PATH"vertex.vert", RESOURCES_PATH"light.frag");
+
+	//Our light source
+	float vertices[] = {
+	-0.5f, -0.5f, -0.5f,
+	 0.5f, -0.5f, -0.5f,
+	 0.5f,  0.5f, -0.5f,
+	 0.5f,  0.5f, -0.5f,
+	-0.5f,  0.5f, -0.5f,
+	-0.5f, -0.5f, -0.5f,
+	};
 
 
-Model ourModel(RESOURCES_PATH"objects/Old English Street Lamp/Old English Street Lamp.obj");
+	unsigned int lightVBO, lightVAO;
+	glGenVertexArrays(1, &lightVAO);
+	glGenBuffers(1, &lightVBO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, lightVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindVertexArray(lightVAO);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+
+
+	Model ourModel(RESOURCES_PATH"objects/Old English Street Lamp/Old English Street Lamp.obj");
 
 	//Render loop
 	while (!glfwWindowShouldClose(window))
@@ -211,12 +239,24 @@ Model ourModel(RESOURCES_PATH"objects/Old English Street Lamp/Old English Street
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		camera->updateCamera(deltaTime);
+
+		lightShader->activate();
+
+		lightShader->setMat4("projection", camera->getProjMatrix());
+		lightShader->setMat4("view", camera->getViewMatrix());
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(1.3f, 0.0f, 0.0f));
+		ourShader->setMat4("model", model);
+
+		glBindVertexArray(lightVAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+
+		lightShader->deactivate();
 
 		//Use shader
 		ourShader->activate();
-
-
-		camera->updateCamera(deltaTime);
 
 
 		//Projection and view transformations
@@ -226,11 +266,15 @@ Model ourModel(RESOURCES_PATH"objects/Old English Street Lamp/Old English Street
 
 
 		//render our loaded model
-		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));  //Translate down so its at center of screen
 		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f)); //Scale because its too big
+		model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(1.0f, 0.0f, 0.0f)); //rotates our shape
 		ourShader->setMat4("model", model);
 		ourModel.Draw(*ourShader);
+		
+		ourShader->deactivate();
+
 
 		/*
 		* 
