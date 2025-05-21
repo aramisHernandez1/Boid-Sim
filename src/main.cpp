@@ -26,7 +26,7 @@ extern "C"
 }
 
 //Camera
-Camera* camera = camera = new Camera();
+Camera* camera = new Camera();
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -201,12 +201,53 @@ int main(void)
 
 	//Our light source
 	float vertices[] = {
-	-0.5f, -0.5f, -0.5f,
-	 0.5f, -0.5f, -0.5f,
-	 0.5f,  0.5f, -0.5f,
-	 0.5f,  0.5f, -0.5f,
-	-0.5f,  0.5f, -0.5f,
-	-0.5f, -0.5f, -0.5f,
+		// back face
+		-0.5f, -0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f,  0.5f, -0.5f,
+
+		// front face
+		-0.5f, -0.5f,  0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+
+		// left face
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+
+		// right face
+		 0.5f,  0.5f,  0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f,  0.5f,  0.5f,
+		 0.5f, -0.5f,  0.5f,
+
+		 // bottom face
+		 -0.5f, -0.5f, -0.5f,
+		  0.5f, -0.5f, -0.5f,
+		  0.5f, -0.5f,  0.5f,
+		  0.5f, -0.5f,  0.5f,
+		 -0.5f, -0.5f,  0.5f,
+		 -0.5f, -0.5f, -0.5f,
+
+		 // top face
+		 -0.5f,  0.5f, -0.5f,
+		 -0.5f,  0.5f,  0.5f,
+		  0.5f,  0.5f,  0.5f,
+		  0.5f,  0.5f,  0.5f,
+		  0.5f,  0.5f, -0.5f,
+		 -0.5f,  0.5f, -0.5f
 	};
 
 
@@ -242,15 +283,19 @@ int main(void)
 		camera->updateCamera(deltaTime);
 
 		lightShader->activate();
+		//Light attributes
+		glm::vec3 lightColor = glm::vec3(1.0f);
+		glm::vec3 lightPos = glm::vec3(5.3f, 1.0f, -4.0f);
 
 		lightShader->setMat4("projection", camera->getProjMatrix());
 		lightShader->setMat4("view", camera->getViewMatrix());
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(1.3f, 0.0f, 0.0f));
-		ourShader->setMat4("model", model);
+		model = glm::translate(model, lightPos);
+		lightShader->setMat4("model", model);
+		lightShader->setVec3("lightColor", lightColor);
 
 		glBindVertexArray(lightVAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 
 		lightShader->deactivate();
@@ -264,6 +309,7 @@ int main(void)
 
 		ourShader->setMat4("view", camera->getViewMatrix());
 
+		glm::vec3 objectColor = glm::vec3(1.0f, 0.5f, 0.31f);
 
 		//render our loaded model
 		model = glm::mat4(1.0f);
@@ -271,6 +317,10 @@ int main(void)
 		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f)); //Scale because its too big
 		model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(1.0f, 0.0f, 0.0f)); //rotates our shape
 		ourShader->setMat4("model", model);
+
+		ourShader->setVec3("lightPos", lightPos);
+		ourShader->setVec3("objectColor", objectColor);
+		ourShader->setVec3("lightColor", lightColor);
 		ourModel.Draw(*ourShader);
 		
 		ourShader->deactivate();
