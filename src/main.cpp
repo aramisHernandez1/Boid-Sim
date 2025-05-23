@@ -25,9 +25,13 @@ extern "C"
 	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = USE_GPU_ENGINE;
 }
 
-//Camera
+//Initalize camera
 Camera* camera = new Camera();
 
+/*
+* Call back functions used mainly for input
+* -------------------------------------------
+*/
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -50,8 +54,10 @@ void mouseButton_callback(GLFWwindow* window, int button, int action, int mods) 
 	camera->handleMouseInputs(button, action);
 }
 
+//--------------------------------------------------
 
-//Timing
+
+//Time handling init
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
@@ -80,6 +86,7 @@ int main(void)
 		return -1;
 	}
 
+	//Set up window and input functions
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetKeyCallback(window, key_callback);
@@ -111,95 +118,14 @@ int main(void)
 	ourShader->attach(RESOURCES_PATH"fragment.frag");
 	ourShader->link();
 
+
 	/*
-	float vertices[] = {
-		-0.5f, -0.5f, -0.5f,  
-		 0.5f, -0.5f, -0.5f,  
-		 0.5f,  0.5f, -0.5f,  
-		 0.5f,  0.5f, -0.5f,  
-		-0.5f,  0.5f, -0.5f,  
-		-0.5f, -0.5f, -0.5f,  
-
-		-0.5f, -0.5f,  0.5f,  
-		 0.5f, -0.5f,  0.5f,  
-		 0.5f,  0.5f,  0.5f,  
-		 0.5f,  0.5f,  0.5f,  
-		-0.5f,  0.5f,  0.5f,  
-		-0.5f, -0.5f,  0.5f,  
-
-		-0.5f,  0.5f,  0.5f,  
-		-0.5f,  0.5f, -0.5f,  
-		-0.5f, -0.5f, -0.5f,  
-		-0.5f, -0.5f, -0.5f,  
-		-0.5f, -0.5f,  0.5f,  
-		-0.5f,  0.5f,  0.5f,  
-
-		 0.5f,  0.5f,  0.5f,  
-		 0.5f,  0.5f, -0.5f,  
-		 0.5f, -0.5f, -0.5f,  
-		 0.5f, -0.5f, -0.5f,  
-		 0.5f, -0.5f,  0.5f,  
-		 0.5f,  0.5f,  0.5f,  
-
-		-0.5f, -0.5f, -0.5f,  
-		 0.5f, -0.5f, -0.5f,  
-		 0.5f, -0.5f,  0.5f,  
-		 0.5f, -0.5f,  0.5f,  
-		-0.5f, -0.5f,  0.5f,  
-		-0.5f, -0.5f, -0.5f,  
-
-		-0.5f,  0.5f, -0.5f,  
-		 0.5f,  0.5f, -0.5f,  
-		 0.5f,  0.5f,  0.5f,  
-		 0.5f,  0.5f,  0.5f,  
-		-0.5f,  0.5f,  0.5f,  
-		-0.5f,  0.5f, -0.5f  
-	};
-
-	glm::vec3 cubePositions[] = {
-	glm::vec3(0.0f,  0.0f,  0.0f),
-	glm::vec3(2.0f,  5.0f, -15.0f),
-	glm::vec3(-1.5f, -2.2f, -2.5f),
-	glm::vec3(-3.8f, -2.0f, -12.3f),
-	glm::vec3(2.4f, -0.4f, -3.5f),
-	glm::vec3(-1.7f,  3.0f, -7.5f),
-	glm::vec3(1.3f, -2.0f, -2.5f),
-	glm::vec3(1.5f,  2.0f, -2.5f),
-	glm::vec3(1.5f,  0.2f, -1.5f),
-	glm::vec3(-1.3f,  1.0f, -1.5f)
-	};
-
-	unsigned int VBO, VAO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	// note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	// remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	// You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-	// VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-	glBindVertexArray(0);
-	*/
-
-
 	//Lighting shader
 	Shader* lightShader;
 	lightShader = new Shader();
 	lightShader->makeBasicShader(RESOURCES_PATH"vertex.vert", RESOURCES_PATH"light.frag");
 
-	//Our light source
+	//Our light source vertices (the white cube).
 	float vertices[] = {
 		// back face
 		-0.5f, -0.5f, -0.5f,
@@ -250,7 +176,7 @@ int main(void)
 		 -0.5f,  0.5f, -0.5f
 	};
 
-
+	//Set up light source data for render
 	unsigned int lightVBO, lightVAO;
 	glGenVertexArrays(1, &lightVAO);
 	glGenBuffers(1, &lightVBO);
@@ -262,10 +188,11 @@ int main(void)
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	*/
 
 
-
-	Model ourModel(RESOURCES_PATH"objects/Old English Street Lamp/Old English Street Lamp.obj");
+	//Load our model
+	Model ourModel(RESOURCES_PATH"objects/pineapple/pineapple2.obj");
 
 	//Render loop
 	while (!glfwWindowShouldClose(window))
@@ -281,7 +208,10 @@ int main(void)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		camera->updateCamera(deltaTime);
+		
 
+		/*
+		//Start the light shader, this shader is just a different vert shader to draw the white cube
 		lightShader->activate();
 		//Light attributes
 		glm::vec3 lightColor = glm::vec3(1.0f);
@@ -295,55 +225,44 @@ int main(void)
 		lightShader->setVec3("lightColor", lightColor);
 		lightShader->setVec3("viewPos", camera->getViewMatrix()[3]);
 
+		//Draw our light, which is the white cube
 		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 
+		//De activate so we can use our model shader
 		lightShader->deactivate();
+		*/
 
-		//Use shader
+		//Use main shader for the model
 		ourShader->activate();
-
 
 		//Projection and view transformations
 		ourShader->setMat4("projection", camera->getProjMatrix());
-
 		ourShader->setMat4("view", camera->getViewMatrix());
 
-		glm::vec3 objectColor = glm::vec3(1.0f, 0.5f, 0.31f);
+		//Setting up our lighting properties
+		ourShader->setVec3("light.position", glm::vec3(1.0f, 1.0f, 2.0f));
+		ourShader->setVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+		ourShader->setVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+		ourShader->setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
+		//View position
+		ourShader->setVec3("viewPos", camera->getViewMatrix()[3]);
+
+		ourShader->setFloat("matieral.shine", 32.0f);
 
 		//render our loaded model
-		model = glm::mat4(1.0f);
+		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));  //Translate down so its at center of screen
 		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f)); //Scale because its too big
-		model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f)); //rotates our shape
+		//model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f)); //rotates our shape
 		ourShader->setMat4("model", model);
 
-		ourShader->setVec3("light.position", lightPos);
-		ourShader->setVec3("lightColor", lightColor);
+		//Finally draw our model
 		ourModel.Draw(*ourShader);
 		
 		ourShader->deactivate();
-
-
-		/*
-		* 
-		
-		glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-		//glDrawArrays(GL_TRIANGLES, 0, 6);
-		glBindVertexArray(VAO);
-		for (unsigned int i = 0; i < 10; i++)
-		{
-			// calculate the model matrix for each object and pass it to shader before drawing
-			glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			ourShader->setMat4("model", model);
-
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-		*/
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
