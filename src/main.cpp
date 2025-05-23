@@ -285,7 +285,7 @@ int main(void)
 		lightShader->activate();
 		//Light attributes
 		glm::vec3 lightColor = glm::vec3(1.0f);
-		glm::vec3 lightPos = glm::vec3(5.3f, 1.0f, -4.0f);
+		glm::vec3 lightPos = glm::vec3(5.3f, 15.0f, -4.0f);
 
 		lightShader->setMat4("projection", camera->getProjMatrix());
 		lightShader->setMat4("view", camera->getViewMatrix());
@@ -293,6 +293,7 @@ int main(void)
 		model = glm::translate(model, lightPos);
 		lightShader->setMat4("model", model);
 		lightShader->setVec3("lightColor", lightColor);
+		lightShader->setVec3("viewPos", camera->getViewMatrix()[3]);
 
 		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -315,7 +316,7 @@ int main(void)
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));  //Translate down so its at center of screen
 		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f)); //Scale because its too big
-		model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(1.0f, 0.0f, 0.0f)); //rotates our shape
+		model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f)); //rotates our shape
 		ourShader->setMat4("model", model);
 
 		ourShader->setVec3("lightPos", lightPos);
