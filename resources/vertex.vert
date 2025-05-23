@@ -17,8 +17,12 @@ out vec3 Normal;
 
 void main()
 {
-    //TexCoords = aTexCoords;
-    gl_Position = projection * view * model * vec4(aPos, 1.0);
+    //Textures
+    TexCoords = aTexCoords;
+
     FragPos = vec3(model * vec4(aPos, 1.0));
     Normal = mat3(transpose(inverse(model))) * aNormal;
+
+    //Apply transform matrixes
+    gl_Position = projection * view * model * vec4(aPos, 1.0);
 }

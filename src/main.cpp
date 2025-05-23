@@ -319,8 +319,7 @@ int main(void)
 		model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f)); //rotates our shape
 		ourShader->setMat4("model", model);
 
-		ourShader->setVec3("lightPos", lightPos);
-		ourShader->setVec3("objectColor", objectColor);
+		ourShader->setVec3("light.position", lightPos);
 		ourShader->setVec3("lightColor", lightColor);
 		ourModel.Draw(*ourShader);
 		
