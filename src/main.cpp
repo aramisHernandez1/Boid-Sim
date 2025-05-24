@@ -74,7 +74,7 @@ int main(void)
 #pragma endregion
 
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //you might want to do this when testing the game for shipping
 
@@ -192,7 +192,7 @@ int main(void)
 
 
 	//Load our model
-	Model ourModel(RESOURCES_PATH"objects/pineapple/pineapple2.obj");
+	Model ourModel(RESOURCES_PATH"objects/boid.obj");
 
 	//Render loop
 	while (!glfwWindowShouldClose(window))
