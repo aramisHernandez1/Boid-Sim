@@ -1,0 +1,20 @@
+#version 430
+
+layout (local_size_x = 1) in;
+
+layout (std430, binding = 0) buffer Pos {
+	vec4 Position[];
+};
+
+void main() {
+	//System var that gives position of current shader invocation in compute space.
+	//our workgroupSize * localSize
+	uint idx = gl_GlobalInvocationID.x;
+
+	vec3 pos = Position[idx].xyz;
+
+	pos += vec3(0.001);
+
+	Position[idx].xyz = pos;
+
+}
