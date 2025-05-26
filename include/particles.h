@@ -21,9 +21,10 @@ private:
 	void InitBuffers();
 	void CalcPositions(std::vector<glm::vec4>& Positions);
 	void ExecuteComputeShader();
-	void RenderParticles(const glm::vec3& VP);
+	void RenderParticles(const glm::mat4& VP);
 
-	Shader particleShader;
+	Shader* basicShader;
+	Shader* computeShader;
 
 
 	int numParticlesX = 0;

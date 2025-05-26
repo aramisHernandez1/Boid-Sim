@@ -14,12 +14,18 @@ Particles::Particles() {
 
 	totalParticles = numParticlesX * numParticlesY * numParticlesZ;
 
+	computeShader = new Shader();
+	basicShader = new Shader();
+
 }
 
 void Particles::Init() {
 	//Init frag and comp shader
+	basicShader->makeBasicShader(RESOURCES_PATH"basicVertex.vert", RESOURCES_PATH"basicFragment.frag");
 
-	//D
+	computeShader->attach(RESOURCES_PATH"particle.comp");
+	computeShader->link();
+
 	InitBuffers();
 }
 
@@ -27,9 +33,8 @@ void Particles::InitBuffers() {
 	std::vector<glm::vec4> Positions(totalParticles);
 	CalcPositions(Positions);
 
-	glCreateBuffers(1 &posBuf);
-
-	unsigned int bufSize = (int)Positions.size();
+	glCreateBuffers(1, &posBuf);
+	unsigned int bufSize = Positions.size() * sizeof(glm::vec4);
 
 	//Init as a SSBo
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, posBuf);
@@ -84,7 +89,7 @@ void Particles::Render(const glm::mat4& VP) {
 }
 
 void Particles::ExecuteComputeShader() {
-	particleShader.activate();
+	glUseProgram(computeShader->get());
 
 	//Note must wait for compute shader to finish executing before rendering results
 	glDispatchCompute(totalParticles, 1, 1);
@@ -94,5 +99,12 @@ void Particles::ExecuteComputeShader() {
 }
 
 void Particles::RenderParticles(const glm::mat4& VP) {
+	//Frag shader stuff here?
+	glUseProgram(basicShader->get());
+	basicShader->setMat4("gWVP", VP);
 
+
+	glBindVertexArray(vao);
+	glDrawArrays(GL_POINTS, 0, totalParticles);
+	glBindVertexArray(0);
 }

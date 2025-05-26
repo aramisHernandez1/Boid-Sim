@@ -2,8 +2,10 @@
 
 #include <glad/glad.h>
 
+#include <string>
+
 const int windowHeight = 600;
 const int windowWidth = 800;
-const char *windowTitle = "BoidSim";
-GLuint windowResizeAble = GL_FALSE;
+const std::string windowTitle = "BoidSim";
+const GLuint windowResizeAble = GL_FALSE;
 const int windowSamples = 4;

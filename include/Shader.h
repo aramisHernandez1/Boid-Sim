@@ -55,7 +55,6 @@ public:
 
 		//Finally attach the shader, and than free the alocated memory
 		glAttachShader(ID, shader);
-		std::cout << "Shader attached" << std::endl;
 
 		glDeleteShader(shader);
 	}
@@ -64,7 +63,6 @@ public:
 	void link() {
 		//Link all current attached shaders
 		glLinkProgram(ID);
-		std::cout << "Linked complete" << std::endl;
 
 		//Display any errors
 		glGetProgramiv(ID, GL_LINK_STATUS, &success);
@@ -145,6 +143,7 @@ private:
 
 	// TEST THIS OUT LATER
 	//Helper function to get error log
+	/*
 	char* getInfoLog(unsigned int shader) {
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLenth);
 		std::unique_ptr<char[]> buffer(new char[logLenth]);
@@ -154,4 +153,5 @@ private:
 
 		return buffer.get();
 	}
+	*/
 };

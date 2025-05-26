@@ -1,7 +1,7 @@
 #include <program.h>
 #include <game.h>
 
-#include <stb/stb_image.h>
+#include <stb_image/stb_image.h>
 
 /*
 * Class Purpose: Sets up all OpenGL settings
@@ -10,17 +10,22 @@
 
 
 void runProgram(GLFWwindow* window) {
+	
+
 	//Flip stb_image to make textures look okay
 	stbi_set_flip_vertically_on_load(true);
 
 	//Configure our openGL global state
 	glEnable(GL_DEPTH_TEST);
 
+	// Enable transparency
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// render
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-	initGame();
+	initGame(window);
 
 	//Render loop
 	while (!glfwWindowShouldClose(window))
@@ -30,7 +35,10 @@ void runProgram(GLFWwindow* window) {
 		updateFrame(window);
 		renderFrame(window);
 
+		glfwSwapBuffers(window);
+		glfwPollEvents();
 
+		/*
 		//Use main shader for the model
 		ourShader->activate();
 
@@ -60,8 +68,6 @@ void runProgram(GLFWwindow* window) {
 		ourModel.Draw(*ourShader);
 
 		ourShader->deactivate();
-
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+		*/
 	}
 }

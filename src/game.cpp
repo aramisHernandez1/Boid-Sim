@@ -1,8 +1,10 @@
 #include <game.h>
 
 #include <camera.h>
+#include <particles.h>
 
 Camera* camera;
+Particles* particles;
 
 //Time handling init
 float deltaTime = 0.0f;
@@ -38,7 +40,8 @@ void mouseButton_callback(GLFWwindow* window, int button, int action, int mods) 
 
 void initGame(GLFWwindow* window) {
 	camera = new Camera();
-
+	particles = new Particles();
+	particles->Init();
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetKeyCallback(window, key_callback);
@@ -60,6 +63,10 @@ void updateFrame(GLFWwindow* window) {
 void renderFrame(GLFWwindow* window) {
 	int windHeight, windWidth;
 	glfwGetWindowSize(window, &windWidth, &windHeight);
-	glViewPort(0, 0, windWidth, windHeight);
+	glViewport(0, 0, windWidth, windHeight);
+
+	//Render logic here
+	glm::mat4 VP = camera->getProjMatrix() * camera->getViewMatrix();
+	particles->Render(VP);
 
 }
