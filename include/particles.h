@@ -1,8 +1,9 @@
 #pragma once
 
+#include <Shader.h>
+
 
 #include <glm/glm.hpp>
-#include <glad/glad.h>
 
 #include <vector>
 
@@ -13,11 +14,16 @@ public:
 
 	void Init();
 	void Update(float time);
-	void Render(const glm::mat4& view, const glm::mat4 proj);
+	void Render(const glm::mat4& VP);
 
 private:
 
 	void InitBuffers();
+	void CalcPositions(std::vector<glm::vec4>& Positions);
+	void ExecuteComputeShader();
+	void RenderParticles(const glm::vec3& VP);
+
+	Shader particleShader;
 
 
 	int numParticlesX = 0;
