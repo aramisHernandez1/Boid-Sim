@@ -8,9 +8,9 @@
 //Note unfinished code complete later
 
 Particles::Particles() {
-	numParticlesX = 100;
-	numParticlesY = 100;
-	numParticlesZ = 100;
+	numParticlesX = 10;
+	numParticlesY = 10;
+	numParticlesZ = 10;
 
 	totalParticles = numParticlesX * numParticlesY * numParticlesZ;
 
